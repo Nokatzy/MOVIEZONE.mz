@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Movie Zone</title>
+</head>
+<style>
+    body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #0d0d0d;
+    color: white;
+  }
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 98%;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: black;
+    border-bottom: 2px solid red;
+    gap: 20px;
+  }
+  .navbar a{
+    transition: background-color 0.3s ease, transform 0.2s;
+  }
+  .navbar a:hover{
+    color: red;
+    transform: scale(1.1);
+  }
+  /* Make logo fixed width so search bar can be centered nicely */
+  .logo {
+    color: red;
+    flex-shrink: 0;
+  }
+  /* Make nav take fixed width so search bar stays centered */
+  .search-bar {
+    flex-grow: 1;
+    max-width: 400px;
+    padding: 7px 15px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    color: black;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+  }
+  nav ul li a {
+    color: white;
+    text-decoration: none;
+  }
+  .slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin: 20px auto;
+    max-width: 90%;
+    overflow: hidden;
+  }
+  .movie-slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 10px 0;
+  }
+  .movie-slider::-webkit-scrollbar {
+    display: none; 
+  }
+  .movie-slider img {
+    width: 150px;
+    flex-shrink: 0;
+    border: 2px solid red;
+    border-radius: 10px;
+  }
+  .arrow {
+    background-color: rgba(255, 0, 0, 0.6);
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    border-radius: 50%;
+  }
+  .arrow.left {
+    left: 0;
+    background-color: transparent;
+  }
+  .arrow.right {
+    right: 0;
+    background-color: transparent;
+  }
+  .intro {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    padding: 40px;
+    background: url('PRICE\ OF\ LOYALTY\ -\ GROUP\ 2.jpg') no-repeat  top/cover;
+    height: 400px;
+  }
+  .intro-text h1 {
+    font-size: 3em;
+    color: white;
+  }
+  .intro-text p {
+    max-width: 400px;
+  }
+  .buttons button {
+    margin-right: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .genre-menu {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  .genre-menu button {
+    background: none;
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .genre-menu button:hover{
+    color: red;
+  }
+  .genre-menu .active {
+    border-bottom: 2px solid red;
+    color: red;
+  }
+  .recommended {
+    padding: 20px;
+  }
+  .movie-slider {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .movie-slider img {
+    width: 150px;
+    border: 2px solid red;
+    border-radius: 10px;
+  }
+  .about {
+    background-color: #1a1a1a;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+  }
+  .services {
+    background-color: #1a1a1a;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+  }
+  .contact {
+    background-color: #1a1a1a;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+  }
+  .movie-buttons button {
+    margin-right: 10px;
+    padding: 10px;
+    background-color: red;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .watch-now {
+    background-color: darkred;
+  }
+  footer {
+    padding: 20px;
+    background-color: black;
+    text-align: center;
+    border-top: 2px solid red;
+  }
+  .popup-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: rgba(0,0,0,0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  .popup-content {
+    position: relative;
+    width: 90vw;
+    height: 90vh;
+    background: none;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+  }
+  .popup-content iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+  .popup-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+  }
+/* ======================= Responsive Design ======================= */
+
+/* Mobile first (default styles are already mobile-friendly where possible) */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-bar {
+    width: 100%;
+    max-width: none;
+    margin-top: 10px;
+  }
+
+  .intro {
+    flex-direction: column;
+    height: auto;
+    padding: 20px;
+    text-align: left;
+  }
+
+  .intro-text h1 {
+    font-size: 2em;
+  }
+
+  .intro-text p {
+    margin: 0 auto;
+    max-width: 90%;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .genre-menu {
+    flex-wrap: wrap;
+  }
+
+  .movie-slider {
+    justify-content: flex-start;
+  }
+
+  .popup-content {
+    width: 95vw;
+    height: 80vh;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .navbar {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .movie-slider img {
+    width: 120px;
+  }
+
+  .intro-text h1 {
+    font-size: 1.8em;
+  }
+
+  .buttons button {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .genre-menu button {
+    padding: 8px;
+    font-size: 0.9em;
+  }
+
+  .about,
+  .services,
+  .contact {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .popup-content {
+    width: 100vw;
+    height: 70vh;
+  }
+}
+
+</style>
+<body>
+<header>
+    <div class="navbar" id="home">
+  <h2 class="logo">MOVIE ZONE</h2>
+  <input type="search" placeholder="Search movies..." class="search-bar" />
+  <nav>
+    <ul>
+      <li><a href="#">HOME</a></li>
+      <li><a href="#about">ABOUT</a></li>
+      <li><a href="#services">SERVICES</a></li>
+      <li><a href="#contact">CONTACT</a></li>
+    </ul>
+  </nav>
+</div>
+</header>
+<main>
+    <section class="intro">
+      <div class="intro-text">
+        <h2>Personally <br>Recommended</h2>
+        <h1>PRICE OF LOYALTY</h1>
+        <p>After witnessing his master's death at the hands of a ruthless syndicate, a young man sets out for revenge. As he takes down the syndicate piece by piece, he discovers the shocking truth — his master is alive and is the leader of the very group he’s been hunting. In the end,  student and master face off and only one walks away.</p>
+        <div class="buttons">
+          <a href="https://drive.google.com/file/d/157N1b1pNUK0UmUI7XXxU19BGnVhKaOLW/view" target="_blank"><button>WATCH</button></a>
+        </div>
+      </div>
+      <div class="intro-bg"></div>
+    </section>
+
+    <section class="genre-menu">
+      <button>ACTION</button>
+      <button>HORROR</button>
+      <button>DRAMA</button>
+      <button>FICTION</button>
+      <button>ANIME</button>
+      <button>RACING</button>
+    </section>
+
+    <section class="recommended">
+        <h3 id="genre-label"></h3>
+        <div class="slider-container">
+    <button class="arrow left">&#10094;</button>
+    <div class="movie-slider">
+      </div>
+  <button class="arrow right">&#10095;</button>
+    </div>
+    </section>
+
+<div class="about" id="about">
+  <h1 >About Us:</h1>
+  <p> Welcome to Movie Zone, your gateway to a world of thrilling entertainment. We specialize in curating and reviewing a wide range of movies and series across popular genres such as Horror, Action, Drama, Sci-Fi, and Anime. Our platform is dedicated to providing detailed insights, honest reviews, and curated recommendations to help you discover your next favorite watch. Whether you're a thrill-seeker, a deep thinker, or an anime enthusiast, MOVIEZONE brings the cinematic universe closer to you.</p>
+  <br><div class="movie-buttons">
+    <a href="#home"><button class="watch-now">Home</button></a>
+  </div>
+</div>
+<div class="services" id="services">
+  <h1 >Services:</h1>
+  <h2>Movie & Series Reviews</h2>
+  <p>In-depth and spoiler-free reviews for the latest and most iconic titles across our featured genres.</p>
+  <h2>Genre-Based Recommendations</h2>
+  <p>Personalized lists based on your mood and preferred genres: Horror, Action, Drama, Sci-Fi, Anime, and Series.</p>
+  <h2>Watchlist Tools</h2>
+  <p>Organize your must-watch titles with our easy-to-use tracking system.</p>
+  <h2>Trending & Upcoming Releases</h2>
+  <p>Stay updated with trending shows, trailers, and release schedules.</p>
+  <h2>Community Ratings & Comments</h2>
+  <p>Join a community of movie lovers—share your thoughts and read real opinions.</p><br>
+  <div class="movie-buttons">
+    <a href="#home"><button class="watch-now">Home</button></a>
+  </div>
+</div>
+<div class="contact" id="contact">
+  <h1>We’d love to hear from you!</h1>
+  <h2>For inquiries, partnerships, or suggestions, feel free to reach out to us:</h2>
+  <p>facebook: Movie Zone</p>
+  <p>emial: moviezone@gmail.com</p><br>
+  <div class="movie-buttons">
+    <a href="#home"><button class="watch-now">Home</button></a>
+  </div>
+</div>
+
+
+</main>
+<footer>
+    <div class="footer-content">
+      <p>CREATED BY MOVIEZONE</p>
+      <p>Computer Engineering | Student</p>
+    </div>
+</footer>
+<div id="popup" class="popup-container">
+    <div class="popup-content">
+      <span class="popup-close">&times;</span>
+      <iframe id="popup-iframe" src=""></iframe>
+    </div>
+</div>
+<script >
+  const genreButtons = document.querySelectorAll('.genre-menu button');
+const movieSlider = document.querySelector('.movie-slider');
+const leftArrow = document.querySelector('.arrow.left');
+const rightArrow = document.querySelector('.arrow.right');
+const popup = document.getElementById('popup');
+const popupIframe = document.getElementById('popup-iframe');
+const searchInput = document.querySelector('.search-bar');
+  // Movie Data
+const moviesByGenre = {
+  ACTION: {
+    movies: [
+      { src: 'black bag.jpg', alt: 'Black Bag', title: 'Black Bag', link: 'Blackbag.html' },
+      { src: 'black bag.jpg', alt: 'Black Bag', title: 'Black Bag', link: 'Blackbag.html' },
+      { src: 'black bag.jpg', alt: 'Black Bag', title: 'Black Bag', link: 'Blackbag.html' },
+      { src: 'black bag.jpg', alt: 'Black Bag', title: 'Black Bag', link: 'Blackbag.html' },
+      { src: 'black bag.jpg', alt: 'Black Bag', title: 'Black Bag', link: 'Blackbag.html' },
+      { src: 'black bag.jpg', alt: 'Black Bag', title: 'Black Bag', link: 'Blackbag.html' },
+      { src: 'black bag.jpg', alt: 'Black Bag', title: 'Black Bag', link: 'Blackbag.html' },
+      { src: 'black bag.jpg', alt: 'Black Bag', title: 'Black Bag', link: 'Blackbag.html' },
+      { src: 'Rebel-Ridge-1-768x960.jpeg', alt: 'Rebel Ridge', title: 'Rebel Ridge', link: 'Rebelridge.html'},
+      { src: 'Rebel-Ridge-1-768x960.jpeg', alt: 'Rebel Ridge', title: 'Rebel Ridge', link: 'Rebelridge.html' },
+      { src: 'Rebel-Ridge-1-768x960.jpeg', alt: 'Rebel Ridge', title: 'Rebel Ridge', link: 'Rebelridge.html' },
+      { src: 'Rebel-Ridge-1-768x960.jpeg', alt: 'Rebel Ridge', title: 'Rebel Ridge', link: 'Rebelridge.html' },
+      { src: 'warfare.jpg', alt: 'Warfare', title: 'Warfare', link: 'Warfare.html' },
+      { src: 'warfare.jpg', alt: 'Warfare', title: 'Warfare', link: 'Warfare.html' },
+      { src: 'warfare.jpg', alt: 'Warfare', title: 'Warfare', link: 'Warfare.html' },
+      { src: 'warfare.jpg', alt: 'Warfare', title: 'Warfare', link: 'Warfare.html' },
+    ],
+    },
+  HORROR: {
+    movies: [
+      { src: 'talktome.jpg', alt: 'Talktome', title: 'Talk to Me', link:'Talktome.html' },
+      { src: 'talktome.jpg', alt: 'Talktome', title: 'Talk to Me', link:'Talktome.html' },
+      { src: 'talktome.jpg', alt: 'Talktome', title: 'Talk to Me', link:'Talktome.html' },
+      { src: 'talktome.jpg', alt: 'Talktome', title: 'Talk to Me', link:'Talktome.html' },
+      { src: 'talktome.jpg', alt: 'Talktome', title: 'Talk to Me', link:'Talktome.html' },
+      { src: 'talktome.jpg', alt: 'Talktome', title: 'Talk to Me', link:'Talktome.html' },
+      { src: 'talktome.jpg', alt: 'Talktome', title: 'Talk to Me', link:'Talktome.html' },
+      { src: 'talktome.jpg', alt: 'Talktome', title: 'Talk to Me', link:'Talktome.html' },
+      { src: 'timecut.webp', alt: 'Timecut', title: 'Timecut', link: 'Timecut.html' },
+      { src: 'timecut.webp', alt: 'Timecut', title: 'Timecut', link: 'Timecut.html' },
+      { src: 'timecut.webp', alt: 'Timecut', title: 'Timecut', link: 'Timecut.html' },
+      { src: 'timecut.webp', alt: 'Timecut', title: 'Timecut', link: 'Timecut.html' },
+      { src: 'afraidd.jpg', alt: 'Afraid', title: 'Afraid', link: 'Afraid.html' },
+      { src: 'afraidd.jpg', alt: 'Afraid', title: 'Afraid', link: 'Afraid.html' },
+      { src: 'afraidd.jpg', alt: 'Afraid', title: 'Afraid', link: 'Afraid.html' },
+      { src: 'afraidd.jpg', alt: 'Afraid', title: 'Afraid', link: 'Afraid.html' },
+    ],
+    },
+  DRAMA: {
+    movies: [
+      { src: 'nadaaniyan.jpg', alt: 'Nadaaniyan', title: 'Nadaaniyan', link: 'Naandiyan.html' },
+      { src: 'nadaaniyan.jpg', alt: 'Nadaaniyan', title: 'Nadaaniyan', link: 'Naandiyan.html' },
+      { src: 'nadaaniyan.jpg', alt: 'Nadaaniyan', title: 'Nadaaniyan', link: 'Naandiyan.html' },
+      { src: 'nadaaniyan.jpg', alt: 'Nadaaniyan', title: 'Nadaaniyan', link: 'Naandiyan.html' },
+      { src: 'nadaaniyan.jpg', alt: 'Nadaaniyan', title: 'Nadaaniyan', link: 'Naandiyan.html' },
+      { src: 'nadaaniyan.jpg', alt: 'Nadaaniyan', title: 'Nadaaniyan', link: 'Naandiyan.html' },
+      { src: 'nadaaniyan.jpg', alt: 'Nadaaniyan', title: 'Nadaaniyan', link: 'Naandiyan.html' },
+      { src: 'nadaaniyan.jpg', alt: 'Nadaaniyan', title: 'Nadaaniyan', link: 'Naandiyan.html' },
+      { src: 'trnd.jpg', alt: 'The Room Next Door', title: 'The Room Next Door', link: 'Theroomnextdoor.html' },
+      { src: 'trnd.jpg', alt: 'The Room Next Door', title: 'The Room Next Door', link: 'Theroomnextdoor.html' },
+      { src: 'trnd.jpg', alt: 'The Room Next Door', title: 'The Room Next Door', link: 'Theroomnextdoor.html' },
+      { src: 'trnd.jpg', alt: 'The Room Next Door', title: 'The Room Next Door', link: 'Theroomnextdoor.html' },
+      { src: 'htmm.jpg', alt: 'How To Make Millions Before Grandma Dies', title: 'How to Make Millions Before Grandma Dies', link: 'Howtomakemillions.html' },
+      { src: 'htmm.jpg', alt: 'How To Make Millions Before Grandma Dies', title: 'How to Make Millions Before Grandma Dies', link: 'Howtomakemillions.html' },
+      { src: 'htmm.jpg', alt: 'How To Make Millions Before Grandma Dies', title: 'How to Make Millions Before Grandma Dies', link: 'Howtomakemillions.html' },
+      { src: 'htmm.jpg', alt: 'How To Make Millions Before Grandma Dies', title: 'How to Make Millions Before Grandma Dies', link: 'Howtomakemillions.html' },
+    ],
+    },
+  FICTION: {
+    movies: [
+      { src: 'pacific.jpg', alt: 'Pacific Rim', title: 'Pacific Rim', link: 'Pacific.html' },
+      { src: 'pacific.jpg', alt: 'Pacific Rim', title: 'Pacific Rim', link: 'Pacific.html' },
+      { src: 'pacific.jpg', alt: 'Pacific Rim', title: 'Pacific Rim', link: 'Pacific.html' },
+      { src: 'pacific.jpg', alt: 'Pacific Rim', title: 'Pacific Rim', link: 'Pacific.html' },
+      { src: 'pacific.jpg', alt: 'Pacific Rim', title: 'Pacific Rim', link: 'Pacific.html' },
+      { src: 'pacific.jpg', alt: 'Pacific Rim', title: 'Pacific Rim', link: 'Pacific.html' },
+      { src: 'pacific.jpg', alt: 'Pacific Rim', title: 'Pacific Rim', link: 'Pacific.html' },
+      { src: 'pacific.jpg', alt: 'Pacific Rim', title: 'Pacific Rim', link: 'Pacific.html' },
+      { src: 'ghost.jpg', alt: 'Ghostbusters: Frozen Empire', title: 'Ghostbusters: Frozen Empire', link: 'Ghost.html' },
+      { src: 'ghost.jpg', alt: 'Ghostbusters: Frozen Empire', title: 'Ghostbusters: Frozen Empire', link: 'Ghost.html' },
+      { src: 'ghost.jpg', alt: 'Ghostbusters: Frozen Empire', title: 'Ghostbusters: Frozen Empire', link: 'Ghost.html' },
+      { src: 'ghost.jpg', alt: 'Ghostbusters: Frozen Empire', title: 'Ghostbusters: Frozen Empire', link: 'Ghost.html' },
+      { src: 'electric.jpg', alt: 'The Electric State', title: 'The Electric Stata', link: 'Electric.html' },
+      { src: 'electric.jpg', alt: 'The Electric State', title: 'The Electric Stata', link: 'Electric.html' },
+      { src: 'electric.jpg', alt: 'The Electric State', title: 'The Electric Stata', link: 'Electric.html' },
+      { src: 'electric.jpg', alt: 'The Electric State', title: 'The Electric Stata', link: 'Electric,html' },
+    ],
+    },
+  ANIME: {
+    movies: [
+      { src: 'yourname.jpg', alt: 'Your Name (Kimi no Na wa)', title: 'Your Name (Kimi no Na wa)', link: 'Yourname.html' },
+      { src: 'yourname.jpg', alt: 'Your Name (Kimi no Na wa)', title: 'Your Name (Kimi no Na wa)', link: 'Yourname.html' },
+      { src: 'yourname.jpg', alt: 'Your Name (Kimi no Na wa)', title: 'Your Name (Kimi no Na wa)', link: 'Yourname.html' },
+      { src: 'yourname.jpg', alt: 'Your Name (Kimi no Na wa)', title: 'Your Name (Kimi no Na wa)', link: 'Yourname.html' },
+      { src: 'yourname.jpg', alt: 'Your Name (Kimi no Na wa)', title: 'Your Name (Kimi no Na wa)', link: 'Yourname.html' },
+      { src: 'yourname.jpg', alt: 'Your Name (Kimi no Na wa)', title: 'Your Name (Kimi no Na wa)', link: 'Yourname.html' },
+      { src: 'yourname.jpg', alt: 'Your Name (Kimi no Na wa)', title: 'Your Name (Kimi no Na wa)', link: 'Yourname.html' },
+      { src: 'yourname.jpg', alt: 'Your Name (Kimi no Na wa)', title: 'Your Name (Kimi no Na wa)', link: 'Yourname.html' },
+      { src: 'opred.jpg', alt: 'One Piece Film: Red', title: 'One Piece Film: Red', link :'Opred.html' },
+      { src: 'opred.jpg', alt: 'One Piece Film: Red', title: 'One Piece Film: Red', link :'Opred.html' },
+      { src: 'opred.jpg', alt: 'One Piece Film: Red', title: 'One Piece Film: Red', link :'Opred.html' },
+      { src: 'opred.jpg', alt: 'One Piece Film: Red', title: 'One Piece Film: Red', link :'Opred.html' },
+      { src: 'hakiyuu.jpg', alt: 'Haikyuu!! The Dumpster Battle', title: 'Haikyuu!! The Dumpster Battle', link: 'Haikyuu.html' },
+      { src: 'hakiyuu.jpg', alt: 'Haikyuu!! The Dumpster Battle', title: 'Haikyuu!! The Dumpster Battle', link: 'Haikyuu.html' },
+      { src: 'hakiyuu.jpg', alt: 'Haikyuu!! The Dumpster Battle', title: 'Haikyuu!! The Dumpster Battle', link: 'Haikyuu.html' },
+      { src: 'hakiyuu.jpg', alt: 'Haikyuu!! The Dumpster Battle', title: 'Haikyuu!! The Dumpster Battle', link: 'Haikyuu.html' },
+    ],  
+    },
+  RACING: {
+    movies: [
+      { src: 'fnf1.jpg', alt: 'The Fast and the Furious', title: 'The Fast and the Furious', link:'Fnf1.html'  },
+      { src: 'fnf1.jpg', alt: 'The Fast and the Furious', title: 'The Fast and the Furious', link:'Fnf1.html'  },
+      { src: 'fnf1.jpg', alt: 'The Fast and the Furious', title: 'The Fast and the Furious', link:'Fnf1.html'  },
+      { src: 'fnf1.jpg', alt: 'The Fast and the Furious', title: 'The Fast and the Furious', link:'Fnf1.html'  },
+      { src: 'fnf1.jpg', alt: 'The Fast and the Furious', title: 'The Fast and the Furious', link:'Fnf1.html'  },
+      { src: 'fnf1.jpg', alt: 'The Fast and the Furious', title: 'The Fast and the Furious', link:'Fnf1.html'  },
+      { src: 'fnf1.jpg', alt: 'The Fast and the Furious', title: 'The Fast and the Furious', link:'Fnf1.html'  },
+      { src: 'fnf1.jpg', alt: 'The Fast and the Furious', title: 'The Fast and the Furious', link:'Fnf1.html'  },
+      { src: 'initial.jpg', alt: 'Initial D: The Movie', title: 'Initial D: The Movie', link:'Initial.html' },
+      { src: 'initial.jpg', alt: 'Initial D: The Movie', title: 'Initial D: The Movie', link:'Initial.html' },
+      { src: 'initial.jpg', alt: 'Initial D: The Movie', title: 'Initial D: The Movie', link:'Initial.html' },
+      { src: 'initial.jpg', alt: 'Initial D: The Movie', title: 'Initial D: The Movie', link:'Initial.html' },
+      { src: 'tokyo.jpg', alt: 'The Fast and the Furious: Tokyo Drift', title: 'The Fast and the Furious: Tokyo Drift', link: 'Tokyo.html' },
+      { src: 'tokyo.jpg', alt: 'The Fast and the Furious: Tokyo Drift', title: 'The Fast and the Furious: Tokyo Drift', link: 'Tokyo.html' },
+      { src: 'tokyo.jpg', alt: 'The Fast and the Furious: Tokyo Drift', title: 'The Fast and the Furious: Tokyo Drift', link: 'Tokyo.html' },
+      { src: 'tokyo.jpg', alt: 'The Fast and the Furious: Tokyo Drift', title: 'The Fast and the Furious: Tokyo Drift', link: 'Tokyo.html' },
+    ],   
+    },
+};
+  // Scroll buttons
+leftArrow.addEventListener('click', () => {
+  movieSlider.scrollBy({ left: -300, behavior: 'smooth' });
+});
+rightArrow.addEventListener('click', () => {
+  movieSlider.scrollBy({ left: 300, behavior: 'smooth' });
+});
+  // Genre switch logic
+genreButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    // Update active button UI
+    genreButtons.forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    const genre = button.textContent.trim().toUpperCase();
+    const data = moviesByGenre[genre];
+    // ✅ Update genre label
+    document.getElementById('genre-label').textContent = `RECOMMENDED | ${genre} MOVIE`;
+    // Update movie list
+    movieSlider.innerHTML = '';
+            if (data?.movies) {
+          data.movies.forEach(movie => {
+            const img = document.createElement('img');
+            img.src = movie.src;
+            img.alt = movie.alt;
+            img.style.cursor = 'pointer';
+            // ✅ When image is clicked, show iframe popup
+            img.addEventListener('click', () => {
+              popupIframe.src = movie.link;
+              popup.style.display = 'flex';
+            });
+            movieSlider.appendChild(img);
+          });
+        }
+  });
+});    
+  // Optional: load default genre on page load
+window.addEventListener('DOMContentLoaded', () => {
+  genreButtons[0].click(); // Simulate click on first genre (e.g. HOROR)
+});
+// Close popup
+document.querySelector('.popup-close').addEventListener('click', () => {
+    popup.style.display = 'none';
+    popupIframe.src = '';
+});
+searchInput.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const query = searchInput.value.trim().toLowerCase();
+    if (!query) {
+      alert('Please enter a search term.');
+      return;
+    }
+    // Gather all matching movies across all genres
+    let matchedMovies = [];
+    for (const [genre, data] of Object.entries(moviesByGenre)) {
+      const movies = data.movies.filter(movie =>
+        movie.title && movie.title.toLowerCase().includes(query)
+      );
+
+      if (movies.length > 0) {
+        matchedMovies.push({ genre, movies, detail: data.detail });
+      }
+    }
+    // Clear slider content
+    movieSlider.innerHTML = '';
+    if (matchedMovies.length === 0) {
+      document.getElementById('genre-label').textContent = `No results found for "${query}".`;
+      const noResults = document.createElement('div');
+      noResults.textContent = 'No movies matched your search.';
+      noResults.style.padding = '1rem';
+      noResults.style.color = 'gray';
+      movieSlider.appendChild(noResults);
+      genreButtons.forEach(btn => btn.classList.remove('active'));
+      return;
+    }
+    // Show movies from first matched genre (or just first matchedMovies[0])
+    const { genre, movies, detail } = matchedMovies[0];
+    // Update label
+    document.getElementById('genre-label').textContent = `Search results for "${query}" in ${genre}`;
+    // Populate slider with matched movies only
+    movies.forEach(movie => {
+      const img = document.createElement('img');
+      img.src = movie.src;
+      img.alt = movie.alt;
+      img.style.cursor = 'pointer';
+      img.addEventListener('click', () => {
+        if (movie.link) {
+          popupIframe.src = movie.link;
+          popup.style.display = 'flex';
+        }
+      });
+      movieSlider.appendChild(img);
+    });
+    genreButtons.forEach(btn => btn.classList.remove('active'));
+  }
+});
+
+
+</script>
+</body>
+</html>
